@@ -1,4 +1,4 @@
-package com.familytodo
+package com.family.todo
 
 import android.os.Build
 import android.os.Bundle

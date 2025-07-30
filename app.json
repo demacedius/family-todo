@@ -2,6 +2,12 @@
   "expo": {
     "name": "family-todo",
     "slug": "family-todo",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "android": {
+      "package": "com.demacedius.familytodo"
+    },
+    "ios": {
+      "bundleIdentifier": "com.demacedius.familytodo"
+    }
   }
 }

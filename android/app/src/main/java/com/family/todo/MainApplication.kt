@@ -1,4 +1,4 @@
-package com.familytodo
+package com.family.todo
 
 import android.app.Application
 import android.content.res.Configuration
