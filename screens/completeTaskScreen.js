@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { db } from "../firebase";
 import { onSnapshot, query, where, orderBy, collection } from "firebase/firestore";
 import { FlatList } from "react-native-gesture-handler";
+import { globalStyles, textStyles, colors , fonts, fontSizes} from "../android/app/utils/theme";
 
 export default function CompleteTaskScreen() {
     const [tasks, setTasks] = useState([]);
@@ -36,37 +37,34 @@ export default function CompleteTaskScreen() {
         }) ?? "Inconnue";
 
         return (
-            <View>
-                <Text>{item.title}</Text>
-                <Text> Terminé le : {date}</Text>
-                <Text> Par : { item.assignedTo}</Text>
+
+            <View style={globalStyles.validateTask}>
+                <View style={globalStyles.textContainer}>
+                    <Text style={textStyles.body}>{item.title}</Text>
+                    <Text style={textStyles.body}> Terminé le : {date}</Text>
+                    <Text style={textStyles.body}> Par : {item.assignedTo}</Text>
+                </View>
             </View>
         )
 
     };
 
     return (
-        <View style={styles.container}>
+        <View style={globalStyles.container}>
             {tasks.length <= 0 ? (
-                <Text>Aucune tâche n'a été validé aujourd'hui</Text>
+                <Text style={{flex:1,textAlign: "center", verticalAlign: "middle", fontFamily: fonts.bold, fontSize: fontSizes.large}}>Aucune tâche n'a été validé aujourd'hui</Text>
             ) : (
-                <FlatList
-                    data={tasks}
-                    keyExtractor={item => item.id}
-                    renderItem={renderItem}
-                />
+                <View style={globalStyles.container}>
+                    <Text style={textStyles.heading}>Tâches validé aujourd'hui</Text>
+                    <FlatList
+                        data={tasks}
+                        keyExtractor={item => item.id}
+                        renderItem={renderItem}
+                    />
+                </View>
             )
             }
         </View>
     )
 }
 
-const styles = StyleSheet.create(
-    {
-        container: {
-            backgroundColor: '#fff',
-            padding: 16,
-            flex: 1
-        }
-    }
-)

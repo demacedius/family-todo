@@ -5,6 +5,8 @@ import { db } from '../firebase';
 import { deleteTask, validateTask } from '../services/TaskService';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { updateTask } from '../services/TaskService';
+import { Picker } from '@react-native-picker/picker';
+import { globalStyles, textStyles, colors  } from '../android/app/utils/theme';
 
 export default function TaskListScreen() {
     const [tasks, setTasks] = useState([]);
@@ -57,18 +59,20 @@ export default function TaskListScreen() {
 
     const renderItem = ({ item }) => {
         return (
-            <View style={styles.taskItem}>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text>Assigné à : {item.assignedTo}</Text>
-                <Text>Status : {item.status ? 'Terminé' : 'En cours'} </Text>
-                <View style={styles.buttonRow}>
-                    <TouchableOpacity style={styles.buttonBorder} onPress={() => deleteTask(item.id)}>
-                        <Icon name='trash-outline' size={20} color={'#000'}></Icon>
+            <View style={globalStyles.taskItem}>
+                <View style={globalStyles.textContainer}>
+                    <Text style={globalStyles.title}>{item.title} </Text>
+                    <Text style={globalStyles.assignedTo}>({item.assignedTo})</Text>
+                    <Text>Status : {item.status ? 'Terminé' : 'En cours'} </Text>
+                </View>
+                <View style={globalStyles.buttonRow}>
+                    <TouchableOpacity style={globalStyles.buttonBorder} onPress={() => deleteTask(item.id)}>
+                        <Icon name='trash-outline' size={20} color={'#000'} ></Icon>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonBorder} onPress={() => OpenEditModal(item)}>
-                        <Icon name='pencil-outline' size={20} color={'#000'}></Icon>
+                    <TouchableOpacity style={globalStyles.buttonBorder} onPress={() => OpenEditModal(item)}>
+                        <Icon name='pencil-outline' size={20} color={'#000'} ></Icon>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={() => validateTask(item.id)}>
+                    <TouchableOpacity style={globalStyles.button} onPress={() => validateTask(item.id)}>
                         <Icon name='checkmark-outline' size={20} color={'#fff'}></Icon>
                     </TouchableOpacity>
                 </View>
@@ -77,7 +81,8 @@ export default function TaskListScreen() {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={globalStyles.container}>
+            <Text style={textStyles.heading}>Tâches à faire aujourdhui</Text>
             <FlatList
                 data={tasks.filter(tasks => tasks.status !== true)}
                 keyExtractor={(item) => item.id}
@@ -85,19 +90,24 @@ export default function TaskListScreen() {
                 ListEmptyComponent={<Text>Il n'y a aucune tâche à faire aujourd'hui</Text>}
             />
             <Modal visible={editModalVisible} animationType="slide" transparent={true}>
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
+                <View style={globalStyles.modalContainer}>
+                    <View style={globalStyles.modalContent}>
                         <Text >Modifier la tâche</Text>
                         <TextInput
                             value={editTitle}
                             onChangeText={setEditTitle}
                             placeholder="Titre"
                         />
-                        <TextInput
-                            value={editAssignedTo}
-                            onChangeText={setEditAssignedTo}
-                            placeholder="Assigné à"
-                        />
+                        <Picker
+                            selectedValue={editAssignedTo}
+                            onValueChange={(itemValue) => setEditAssignedTo(itemValue)}
+                        >
+                            <Picker.Item label="Amandine" value="Amandine" />
+                            <Picker.Item label="Anthony" value="Anthony" />
+                            <Picker.Item label="Evan" value="Evan" />
+                            <Picker.Item label="Tout le monde" value="Tout le monde" />
+                        </Picker>
+
                         <Button title="Enregistrer" onPress={handleUpdate} />
                         <Button title="Annuler" onPress={() => setEditModalVisible(false)} />
                     </View>
@@ -106,55 +116,3 @@ export default function TaskListScreen() {
         </View>
     )
 }
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        padding: 16,
-        backgroundColor: '#fff',
-        gap: 8,
-    },
-    taskItem: {
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-        paddingVertical: 12,
-        gap: 8,
-    },
-    title: {
-        fontWeight: 'bold',
-        fontSize: 16,
-    },
-    button: {
-        backgroundColor: '#bf2df5ff',
-        flex: 1 / 3,
-        borderRadius: 999,
-        alignItems: 'center',
-        padding: 7
-    },
-
-    buttonBorder: {
-        borderColor: '#bf2df5ff',
-        borderWidth: 2,
-        flex: 1 / 3,
-        borderRadius: 999,
-        alignItems: 'center',
-        padding: 7
-    },
-    buttonRow: {
-        flexDirection: 'row',
-        gap: 10
-    },
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // flou derrière
-    },
-    modalContent: {
-        backgroundColor: '#fff',
-        padding: 20,
-        borderRadius: 10,
-        width: '80%',
-    }
-
-});

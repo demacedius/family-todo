@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { Picker } from '@react-native-picker/picker'
 import { addTask } from "../services/TaskService";
+import { globalStyles, textStyles, colors, fonts, fontSizes } from "../android/app/utils/theme";
 
 export default function AddTaskScreen() {
     const [title, setTitle] = useState('');
-    const [assignedTo, setAssigndTo] = useState('');
+    const [assignedTo, setAssignedTo] = useState('');
 
     const handleAdd = async () => {
         if (!title || !assignedTo) {
@@ -16,50 +18,66 @@ export default function AddTaskScreen() {
             await addTask(title, assignedTo);
             Alert.alert("Succés", "Tâche ajoutée");
             setTitle('');
-            setAssigndTo('')
+            setAssignedTo('')
         } catch (e) {
+            console.error("Erreur lors de l'ajout de la tâche", e)
             Alert.alert("Erreur lors de l'ajout de la tâche");
         }
     }
 
-    return(
-    <View style={styles.container}>
-        <Text style={styles.label}>Titre de la tâche</Text>
-        <TextInput
-            style={styles.input}
-            value={title}
-            onChangeText={setTitle}
-            placeholder="Le titre de la Tâche"
-        />
+    return (
+        <View style={globalStyles.container}>
+            <Text style={textStyles.heading}> Ajouter une nouvelle tâche</Text>
+            <Text style={globalStyles.textContainer}>
+                Ajouter les nouvelles tâche du jour,
+                elle seront affiché de la plus récente à la plus ancienne.
+                N'oubliez pas de bien choisir une personne à qui donner la tâche.
+            </Text>
+            <View style={globalStyles.taskItem}>
+                <Text style={globalStyles.label}>Titre de la tâche</Text>
+                <TextInput
+                    style={globalStyles.input}
+                    value={title}
+                    onChangeText={setTitle}
+                    placeholder="Le titre de la Tâche"
+                />
 
-        <Text style={styles.label}>Assigné à :</Text>
-        <TextInput
-            style={styles.input}
-            value={assignedTo}
-            onChangeText={setAssigndTo}
-            placeholder="C'est pour qui"
-        />
+                <Text style={globalStyles.label}>Assigné à :</Text>
+                <View style={globalStyles.pickerWrapper}>
+                    <Picker
+                        selectedValue={assignedTo}
+                        onValueChange={(itemValue) => setAssignedTo(itemValue)}
+                        style={globalStyles.picker}
+                    >
+                        <Picker.Item label="Amandine" value="Amandine" />
+                        <Picker.Item label="Anthony" value="Anthony" />
+                        <Picker.Item label="Evan" value="Evan" />
+                        <Picker.Item label="Tout le monde" value="Tout le monde" />
+                    </Picker>
+                </View>
 
-        <Button title="Ajoutez une tâche" onPress={handleAdd} />
-    </View>)
+                <TouchableOpacity style={styles.button} onPress={handleAdd} >
+                    <Text style={styles.buttonText}>Ajoutez une tâche</Text>
+                </TouchableOpacity>
+            </View>
+        </View>)
 
 }
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 16,
-        flex: 1,
-        backgroundColor: '#fff'
+    button: {
+        backgroundColor: colors.primary,
+        borderRadius: 999,
+        padding: 20,
+        position: "absolute",
+        bottom: 20,
+        right: 20,
+        left: 20,
     },
-    label: {
-        marginBottom: 8,
-        fontWeight: 'bold'
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 6,
-        padding: 10,
-        marginBottom: 20
+    buttonText: {
+        color: "#fff",
+        fontFamily: fonts.bold,
+        fontSize: fontSizes.large,
+        textAlign: "center",
     }
 });

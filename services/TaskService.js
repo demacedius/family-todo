@@ -7,6 +7,7 @@ export const addTask = async ( title, assignedTo) => {
         const docRef = await addDoc(collection(db,'tasks'), {
             title,
             assignedTo,
+            isDaily: false,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
             status: pending
